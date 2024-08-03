@@ -22,15 +22,27 @@
 #include "lwip/sys.h"
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
+
+// Se incluye la libreria para el BMP280
 #include <bmp280.h>
+
+// Se incluye la libreria para el DHT11
+#include "dht.h"
+
 #include "../config.h"
 
 /* HTTP constants that aren't configurable in menuconfig */
 #define WEB_PATH "/measurement"
 
+//Constantes para el DHT11
+
+static const gpio_num_t dht_gpio = ONE_WIRE_GPIO;
+static const dht_sensor_type_t sensor_type = DHT_TYPE_DHT11;
+
 static const char *TAG = "temp_collector";
 
-static char *BODY = "id="DEVICE_ID"&t=%0.2f&h=%0.2f";
+// BODY con BMP280 y DHT11
+static char *BODY = "id="DEVICE_ID"&key="DEVICE_KEY"&bt=%0.2f&bp=%0.2f&dt=%0.2f&dh=%0.2f";
 
 static char *REQUEST_POST = "POST "WEB_PATH" HTTP/1.0\r\n"
     "Host: "API_IP_PORT"\r\n"
@@ -59,6 +71,10 @@ static void http_get_task(void *pvParameters)
     bmp280_t dev;
     memset(&dev, 0, sizeof(bmp280_t));
 
+    //Variables para el DHT11
+    int16_t dht11Temperature = 0;
+    int16_t dht11Humidity = 0;
+
     ESP_ERROR_CHECK(bmp280_init_desc(&dev, BMP280_I2C_ADDRESS_0, 0, SDA_GPIO, SCL_GPIO));
     ESP_ERROR_CHECK(bmp280_init(&dev, &params));
 
@@ -67,20 +83,29 @@ static void http_get_task(void *pvParameters)
 
     float pressure, temperature, humidity;
 
-
-
     while(1) {
+        //Verificamos que no haya error en BMP280
         if (bmp280_read_float(&dev, &temperature, &pressure, &humidity) != ESP_OK) {
-            ESP_LOGI(TAG, "Temperature/pressure reading failed\n");
-        } else {
+            ESP_LOGI(TAG, "Temperature/pressure reading failed from BMP280 sensor\n");
+        } 
+        
+        //Verificamos que no haya error en DHT11
+        else if (dht_read_data(sensor_type, dht_gpio, &dht11Humidity, &dht11Temperature) != ESP_OK) {
+            ESP_LOGI(TAG,"Could not read data from DHT11 sensor\n");
+        } 
+
+        // Si se leen los dos SENSORES
+        else {
+            //BMP280
             ESP_LOGI(TAG, "Pressure: %.2f Pa, Temperature: %.2f C", pressure, temperature);
-//            if (bme280p) {
-                ESP_LOGI(TAG,", Humidity: %.2f\n", humidity);
-		sprintf(body, BODY, temperature , humidity );
-                sprintf(send_buf, REQUEST_POST, (int)strlen(body),body );
-//	    } else {
-//                sprintf(send_buf, REQUEST_POST, temperature , 0);
-//            }
+
+            //DHT11      
+            ESP_LOGI(TAG,"DHT11 Humidity: %d%% DHT11 Temp: %dC\n", dht11Humidity / 10, dht11Temperature / 10);          
+
+            sprintf(body, BODY, temperature , pressure, (float) dht11Temperature/10, (float) dht11Humidity/10);
+            
+            sprintf(send_buf, REQUEST_POST, (int)strlen(body),body );
+
 	    ESP_LOGI(TAG,"sending: \n%s\n",send_buf);
         }    
 

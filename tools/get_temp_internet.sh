@@ -1,5 +1,15 @@
-#Obtenemos las variables necesarias desde el archivo .txt
-source get_temp_internet_config.txt
+# Definimos las siguientes variables para utilizar:
+
+# Ingresamos la posicion GPS (Latitud y Longitud)
+LAT=-00.000000
+LON=-00.000000
+
+# Ingresamos la APIKEY de la cuenta openweathermap
+APIKEY= SOMEKEY
+
+# Ingresamos el ID y la KEY del dispositivo virtual
+ID=Virtual001 
+KEYDEVICE=VirtualKEY001
 
 # Ejecutamos la API y guardamos en el archivo .txt
 wget -O temp_internet.txt "https://api.openweathermap.org/data/2.5/weather?lat=$LAT&lon=$LON&APPID=$APIKEY&units=metric&exclude=current"
