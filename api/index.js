@@ -42,31 +42,8 @@ app.use(express.static('spa/static'));
 const PORT = 8080;
 
 app.post('/measurement', function (req, res) {
-    // Generar el timestamp en formato ISO 8601 para almacenar en la BD
-    const timestamp = new Date().toISOString();
-
--   console.log("device id: " + req.body.id + " key: " + req.body.key + " BMP280 temperature:" + 
-    req.body.bt + " BMP280 pressure: " + req.body.bp + 
-    " DHT11 temperature: " + req.body.dt + " DHT11 humidity: " + req.body.dh +
-    " Timestamp: " + timestamp);	
-
-    const {insertedId} = insertMeasurement({id:req.body.id, key:req.body.key, 
-        temp_bmp280:req.body.bt, pressure_bmp280:req.body.bp, 
-        temp_dht11:req.body.dt, humidity_dht11:req.body.dh, 
-        timestamp:timestamp});
-	res.send("received measurement into " +  insertedId);
-});
-
-app.post('/virtual/measurement', function (req, res) {
-    // Generar el timestamp en formato ISO 8601 para almacenar en la BD
-    const virtualTimestamp = new Date().toISOString();
-
--   console.log("device id: " + req.body.id + " key: " + req.body.key + " Temperature:" + 
-    req.body.t + " humidity: " + req.body.h + "pressure: " + req.body.p + " Timestamp: " + virtualTimestamp);	
-    
-    const {insertedId} = insertMeasurement({id:req.body.id, key:req.body.key, 
-        temp:req.body.t, humidity:req.body.h, pressure:req.body.p,          
-        timestamp:virtualTimestamp});
+-       console.log("device id    : " + req.body.id + " key         : " + req.body.key + " temperature : " + req.body.t + " humidity    : " + req.body.h);	
+    const {insertedId} = insertMeasurement({id:req.body.id, t:req.body.t, h:req.body.h});
 	res.send("received measurement into " +  insertedId);
 });
 
@@ -139,23 +116,15 @@ startDatabase().then(async() => {
     const addAdminEndpoint = require("./admin.js");
     addAdminEndpoint(app, render);
 
-    //await insertMeasurement({id:'00', t:'18', h:'78'});
-
-    //await insertMeasurement({id:'00', key:'AAA' , t:'18', h:'78'});
-
-    await insertMeasurement({id:'00', key: '123456', sensor1: 'BMP280', bt:'18', bp:'1009', 
-        sensor2:'DHT11', dt:'18', dh:'54', timestamp:'2000-01-01T00:00:00.000Z'});
-    await insertMeasurement({id:'00', key: '123456', sensor1: 'BMP280', bt:'19', bp:'1009', 
-        sensor2:'DHT11', dt:'19', dh:'55', timestamp:'2000-01-01T00:00:15.000Z'});
-    await insertMeasurement({id:'00', key: '123456', sensor1: 'BMP280', bt:'18', bp:'1008', 
-        sensor2:'DHT11', dt:'18', dh:'55', timestamp:'2000-01-01T00:00:30.000Z'});
-    await insertMeasurement({id:'01', key: '234567', sensor1: 'BMP280', bt:'17', bp:'1007', 
-        sensor2:'DHT11', dt:'17', dh:'60', timestamp:'2000-01-01T00:00:00.000Z'});
+    await insertMeasurement({id:'00', t:'18', h:'78'});
+    await insertMeasurement({id:'00', t:'19', h:'77'});
+    await insertMeasurement({id:'00', t:'17', h:'77'});
+    await insertMeasurement({id:'01', t:'17', h:'77'});
     console.log("mongo measurement database Up");
 
-    db.public.none("CREATE TABLE devices (device_id VARCHAR, name VARCHAR, key VARCHAR, sensor1 VARCHAR, bt VARCHAR, bp VARCHAR, sensor2 VARCHAR, dt VARCHAR, dh VARCHAR)");
-    db.public.none("INSERT INTO devices VALUES ('00', 'Fake Device 00', '123456', 'BMP280', '18', '1009', 'DHT11', '18', '54')");
-    db.public.none("INSERT INTO devices VALUES ('01', 'Fake Device 01', '234567', 'BMP280', '19', '1008', 'DHT11', '19', '56')");
+    db.public.none("CREATE TABLE devices (device_id VARCHAR, name VARCHAR, key VARCHAR)");
+    db.public.none("INSERT INTO devices VALUES ('00', 'Fake Device 00', '123456')");
+    db.public.none("INSERT INTO devices VALUES ('01', 'Fake Device 01', '234567')");
     db.public.none("CREATE TABLE users (user_id VARCHAR, name VARCHAR, key VARCHAR)");
     db.public.none("INSERT INTO users VALUES ('1','Ana','admin123')");
     db.public.none("INSERT INTO users VALUES ('2','Beto','user123')");
