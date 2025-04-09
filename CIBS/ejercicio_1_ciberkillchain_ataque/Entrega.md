@@ -8,8 +8,6 @@
 
 ---
 
-# Ejercicio Cyber Kill Chain – Ataque
-
 ## 🔍 **Descripción**
 
 Este ejercicio presenta un ataque basado en la metodología **Cyber Kill Chain**, enfocado en comprometer la instancia de **EC2** que aloja el backend (FastAPI), frontend (React) y la base de datos (MongoDB) del sistema de monitoreo y gestión remota del clima en invernaderos. El ataque parte de la obtención de **credenciales válidas** mediante **ingeniería social (phishing)** y se basa en la **explotación de endpoints del backend** para ejecutar inyecciones, manipular datos, mantener persistencia y **afectar el funcionamiento de los sensores y actuadores** conectados al sistema.
@@ -191,7 +189,7 @@ Ejecutar acciones que saboteen el funcionamiento general del invernadero, compro
 - _T1531_ – Account Access Removal  
   https://attack.mitre.org/techniques/T1531/
 
-- _T1565_ – Data Manipulation 
+- _T1565_ – Data Manipulation  
   https://attack.mitre.org/techniques/T1565/
 
 **Pasos realizados:**
