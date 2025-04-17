@@ -234,6 +234,39 @@ Identificar información sensible del sistema a partir de fuentes públicas, com
 
 ---
 
+### 7 - **Reconnaissance (Reconocimiento)**
+
+**Objetivo:**
+
+Prevenir la exposición de información sensible y detectar intentos de recolección de datos, de manera de reducir los intentos de ataques.
+
+**Técnicas utilizadas:**
+
+- **_T1592.002_ – Gather Victim Identity Information**  
+  https://attack.mitre.org/techniques/T1592/002/
+
+  - **🧠 Técnica:** Búsqueda de correos institucionales, nombres de usuarios y roles organizacionales a través de sitios web públicos, redes sociales y documentos expuestos.
+
+  - **🕵️‍♂️ Detección:** Realizar un monitoreo de patrones de scraping en el sitio web institucional. Implementar alertas por accesos repetitivos a páginas de contacto o directorios.
+
+  - **🛡️ Mitigación:** Reemplazar correos electrónicos visibles por formularios de contacto seguros con CAPTCHA. Limitar la publicación de información organizacional sensible.
+
+    - **🛠️ Técnica utilizada:** _M1017_ –  User Training   
+  https://attack.mitre.org/mitigations/M1017/ 
+
+- **_T1593_ – Search Open Websites/Domains**  
+
+  - **🧠 Técnica:** Análisis de repositorios públicos (GitHub), documentos compartidos y foros técnicos para encontrar credenciales, endpoints o configuraciones expuestas.
+
+  - **🕵️‍♂️ Detección:** Realizar escaneo automatizado de repositorios en busca de secretos expuestos.
+
+  - **🛡️ Mitigación:** Configurar repositorios como privados. Rotar credenciales potencialmente expuestas.
+
+  - **🛠️ Técnica utilizada:** _M1047_ –  Audit   
+  https://attack.mitre.org/mitigations/M1047/ 
+
+---
+
 ## ✅ Conclusión
 
 El presente plan de defensa demuestra cómo aplicar la lógica inversa de la Cyber Kill Chain permite identificar puntos críticos de ataque y establecer controles específicos y eficaces en cada fase 🎯. En entornos IoT como EnviroSense, donde confluyen hardware, software y servicios en la nube, una estrategia de seguridad proactiva y multicapa es fundamental 🔐.
